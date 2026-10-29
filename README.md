@@ -1,5 +1,7 @@
 # stunuri
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/xchacha20-poly1305/stunuri-go.svg)](https://pkg.go.dev/github.com/xchacha20-poly1305/stunuri-go)
+
 A Go parser for STUN and TURN URIs defined by [RFC 7064](https://www.rfc-editor.org/rfc/rfc7064)
 and [RFC 7065](https://www.rfc-editor.org/rfc/rfc7065).
 
@@ -8,7 +10,7 @@ Requires Go 1.22 or later. No external dependencies.
 ## Install
 
 ```sh
-go get github.com/xchacha20-poly1305/stunuri@v0.1.0
+go get github.com/xchacha20-poly1305/stunuri-go@latest
 ```
 
 ## Usage
@@ -24,9 +26,10 @@ if err != nil {
 // uri.Port      == "5349"
 // uri.Transport == "tcp"
 // uri.Secure()  == true
+// uri.String()  == "turns:example.org:5349?transport=tcp"
 ```
 
-Import `github.com/xchacha20-poly1305/stunuri`.
+Import `github.com/xchacha20-poly1305/stunuri-go`.
 
 `Parse` accepts the opaque schemes `stun:`, `stuns:`, `turn:`, and `turns:`.
 It rejects hierarchical URLs such as `stun://example.org`, user information,
