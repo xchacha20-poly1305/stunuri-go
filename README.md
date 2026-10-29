@@ -37,6 +37,10 @@ The scheme is normalized to lowercase. Host, port, and transport retain their
 original spelling, including host percent-encoding and brackets around IP
 literals. An omitted or empty port and an omitted transport remain empty.
 
+`URI.String()` builds a URI from its stored components without validation or
+escaping. Empty port and transport fields are omitted, so parsing and rebuilding
+`stun:example.org:` produces `stun:example.org`.
+
 Parsing validates syntax only. Callers choose defaults, resolve hosts, decode
 registered names, validate numeric port ranges, and reject unsupported transport
 extensions or IPvFuture literals. Secure UDP URIs are syntactically accepted;

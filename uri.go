@@ -20,6 +20,20 @@ type URI struct {
 	Transport string
 }
 
+// String builds a URI from its components without validation or escaping.
+// An empty port or transport is omitted. Host must already include any
+// required IP literal brackets or registered name percent-encoding.
+func (u URI) String() string {
+	value := u.Scheme + ":" + u.Host
+	if u.Port != "" {
+		value += ":" + u.Port
+	}
+	if u.Transport != "" {
+		value += "?transport=" + u.Transport
+	}
+	return value
+}
+
 // Secure reports whether the scheme requires a secure transport.
 func (u URI) Secure() bool {
 	return u.Scheme == "stuns" || u.Scheme == "turns"

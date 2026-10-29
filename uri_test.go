@@ -23,6 +23,9 @@ func TestRFC7064Examples(t *testing.T) {
 			if *uri != want {
 				t.Fatalf("Parse() = %+v, want %+v", *uri, want)
 			}
+			if got := uri.String(); got != test.input {
+				t.Fatalf("String() = %q, want %q", got, test.input)
+			}
 			if uri.Secure() != test.secure {
 				t.Fatalf("Secure() = %v, want %v", uri.Secure(), test.secure)
 			}
@@ -55,6 +58,9 @@ func TestRFC7065Examples(t *testing.T) {
 			want := URI{Scheme: test.scheme, Host: "example.org", Port: test.port, Transport: test.transport}
 			if *uri != want {
 				t.Fatalf("Parse() = %+v, want %+v", *uri, want)
+			}
+			if got := uri.String(); got != test.input {
+				t.Fatalf("String() = %q, want %q", got, test.input)
 			}
 			if uri.Secure() != test.secure {
 				t.Fatalf("Secure() = %v, want %v", uri.Secure(), test.secure)
@@ -92,6 +98,13 @@ func TestParseSyntax(t *testing.T) {
 			if *uri != test.want {
 				t.Fatalf("Parse() = %+v, want %+v", *uri, test.want)
 			}
+			reparsed, err := Parse(uri.String())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if *reparsed != *uri {
+				t.Fatalf("Parse(String()) = %+v, want %+v", *reparsed, *uri)
+			}
 		})
 	}
 }
@@ -122,6 +135,26 @@ func TestParseRejectsInvalidSyntax(t *testing.T) {
 			uri, err := Parse(input)
 			if err == nil || uri != nil {
 				t.Fatalf("Parse() = %+v, %v; want nil and an error", uri, err)
+			}
+		})
+	}
+}
+
+func TestString(t *testing.T) {
+	for _, test := range []struct {
+		uri  URI
+		want string
+	}{
+		{URI{Scheme: "stun", Host: "example.org"}, "stun:example.org"},
+		{URI{Scheme: "stuns", Host: "example.org", Port: "005349"}, "stuns:example.org:005349"},
+		{URI{Scheme: "turn", Host: "example.org", Transport: "UDP"}, "turn:example.org?transport=UDP"},
+		{URI{Scheme: "turns", Host: "[2001:db8::1]", Port: "5349", Transport: "tcp"}, "turns:[2001:db8::1]:5349?transport=tcp"},
+		{URI{Scheme: "turn", Host: "ex%61mple.org", Transport: "extension-._~123"}, "turn:ex%61mple.org?transport=extension-._~123"},
+		{URI{Scheme: "turn", Host: "[v1.future:address]"}, "turn:[v1.future:address]"},
+	} {
+		t.Run(test.want, func(t *testing.T) {
+			if got := test.uri.String(); got != test.want {
+				t.Fatalf("String() = %q, want %q", got, test.want)
 			}
 		})
 	}
